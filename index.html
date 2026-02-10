@@ -3,207 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FoodCo Executive Pro v3</title>
+    <title>FoodCo Ultimate Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .sidebar-link { transition: 0.2s; border-radius: 12px; margin-bottom: 4px; }
-        .sidebar-link:hover { background: #334155; }
-        .active-nav { background: #4f46e5 !important; color: white; }
-        input:focus, select:focus { outline: 2px solid #6366f1; border-color: transparent; }
-        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
+        .active-nav { background: #4f46e5; color: white; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4); }
+        input, select { border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; transition: 0.2s; }
+        input:focus { border-color: #4f46e5; outline: none; ring: 2px #4f46e5; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-900 h-screen overflow-hidden flex">
+<body class="bg-slate-50 font-sans text-slate-900">
 
-    <aside class="w-72 bg-slate-900 text-slate-300 flex flex-col p-6 shadow-2xl">
-        <div class="mb-10 px-2">
-            <h1 class="text-2xl font-black text-white tracking-tighter">FOODCO <span class="text-indigo-500">PRO</span></h1>
-            <div class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Enterprise Manager v3.0</div>
-        </div>
-        
-        <nav class="flex-1">
-            <button onclick="nav('home')" id="n-home" class="sidebar-link w-full flex items-center gap-3 p-3 active-nav"><i class="fas fa-chart-line"></i> Dashboard</button>
-            <button onclick="nav('members')" id="n-members" class="sidebar-link w-full flex items-center gap-3 p-3"><i class="fas fa-user-edit"></i> Edit Members</button>
-            <button onclick="nav('finance')" id="n-finance" class="sidebar-link w-full flex items-center gap-3 p-3"><i class="fas fa-coins"></i> Finance & Balance</button>
-            <button onclick="nav('attendance')" id="n-attendance" class="sidebar-link w-full flex items-center gap-3 p-3"><i class="fas fa-calendar-check"></i> Attendance</button>
-            <button onclick="nav('menu')" id="n-menu" class="sidebar-link w-full flex items-center gap-3 p-3"><i class="fas fa-hamburger"></i> Menu Card</button>
-        </nav>
+    <div class="flex h-screen">
+        <aside class="w-72 bg-slate-900 text-white p-6 flex flex-col shadow-2xl">
+            <h1 class="text-2xl font-black mb-10 text-indigo-400">FOODCO <span class="text-white text-sm">PRO v4</span></h1>
+            
+            <nav class="flex-1 space-y-2">
+                <button onclick="switchTab('home')" id="btn-home" class="w-full flex items-center gap-3 p-4 rounded-xl active-nav"><i class="fas fa-home"></i> Dashboard</button>
+                <button onclick="switchTab('members')" id="btn-members" class="w-full flex items-center gap-3 p-4 rounded-xl hover:bg-slate-800"><i class="fas fa-user-plus"></i> Members</button>
+                <button onclick="switchTab('finance')" id="btn-finance" class="w-full flex items-center gap-3 p-4 rounded-xl hover:bg-slate-800"><i class="fas fa-wallet"></i> Finance</button>
+                <button onclick="switchTab('menu')" id="btn-menu" class="w-full flex items-center gap-3 p-4 rounded-xl hover:bg-slate-800"><i class="fas fa-utensils"></i> Menu Card</button>
+            </nav>
 
-        <button onclick="alert('Google Auth: Connect your Firebase API key in the script tag.')" class="bg-white/10 p-3 rounded-xl flex items-center justify-center gap-2 hover:bg-white/20 transition">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" class="w-4"> <span class="text-sm font-bold text-white">Sign In</span>
-        </button>
-    </aside>
+            <button onclick="alert('Google Auth Ready: Link your Firebase Config in script')" class="mt-auto bg-white/10 p-3 rounded-xl flex items-center justify-center gap-2 hover:bg-red-500 transition font-bold">
+                <i class="fab fa-google"></i> SIGN IN
+            </button>
+        </aside>
 
-    <main class="flex-1 overflow-y-auto relative">
-        
-        <section id="home" class="p-10 space-y-8">
-            <header class="flex justify-between items-center">
-                <div>
-                    <h2 class="text-4xl font-extrabold tracking-tight">Daily Summary</h2>
-                    <p class="text-slate-500" id="date-now"></p>
-                </div>
-                <div class="flex gap-4">
-                    <div class="glass-panel p-4 rounded-2xl shadow-sm">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">Monthly Remaining</p>
-                        <p id="days-rem" class="text-2xl font-black text-indigo-600">--</p>
+        <main class="flex-1 overflow-y-auto p-10">
+
+            <section id="tab-home" class="tab-content block space-y-8">
+                <div class="flex justify-between items-end">
+                    <div>
+                        <h2 class="text-4xl font-black">Company Pulse</h2>
+                        <p class="text-slate-500 mt-2">Real-time financial & eating statistics</p>
                     </div>
                 </div>
-            </header>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200">
-                    <p class="text-sm font-bold text-slate-400">Total Income</p>
-                    <p id="stat-income" class="text-2xl font-black text-green-600">₹ 0</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+                        <p class="text-xs font-bold text-slate-400 uppercase">Total Collection</p>
+                        <p id="h-total-in" class="text-3xl font-black text-green-600">₹ 0</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+                        <p class="text-xs font-bold text-slate-400 uppercase">Total Expenses</p>
+                        <p id="h-total-out" class="text-3xl font-black text-red-500">₹ 0</p>
+                    </div>
+                    <div class="bg-indigo-600 p-8 rounded-[2.5rem] shadow-xl text-white">
+                        <p class="text-xs font-bold opacity-80 uppercase">Pending Balance</p>
+                        <p id="h-pending" class="text-3xl font-black">₹ 0</p>
+                    </div>
                 </div>
-                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200">
-                    <p class="text-sm font-bold text-slate-400">Total Spent</p>
-                    <p id="stat-spent" class="text-2xl font-black text-red-500">₹ 0</p>
-                </div>
-                <div class="bg-indigo-600 p-6 rounded-[2rem] shadow-lg text-white">
-                    <p class="text-sm font-bold opacity-80">Active Eaters</p>
-                    <p id="stat-eaters" class="text-2xl font-black">0</p>
-                </div>
-                <div class="bg-slate-900 p-6 rounded-[2rem] shadow-lg text-white">
-                    <p class="text-sm font-bold opacity-80">Pending Balance</p>
-                    <p id="stat-pending" class="text-2xl font-black text-orange-400">₹ 0</p>
-                </div>
-            </div>
-            
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm">
-                <h3 class="font-bold text-lg mb-4">Financial Health (Yearly)</h3>
-                <canvas id="mainChart" height="100"></canvas>
-            </div>
-        </section>
 
-        <section id="members" class="p-10 hidden space-y-6">
-            <div class="flex justify-between">
-                <h2 class="text-3xl font-black">Member Directory</h2>
-                <button onclick="openModal()" class="bg-indigo-600 text-white px-6 py-2 rounded-xl font-bold shadow-lg shadow-indigo-200">Add New Student</button>
-            </div>
-            <div class="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-slate-200">
-                <table class="w-full text-left">
-                    <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-bold">
-                        <tr>
-                            <th class="p-6">Full Name (Locked)</th>
-                            <th class="p-6">Department</th>
-                            <th class="p-6">Year</th>
-                            <th class="p-6">Phone</th>
-                            <th class="p-6">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="member-table-body" class="text-sm"></tbody>
-                </table>
-            </div>
-        </section>
-
-        <section id="finance" class="p-10 hidden space-y-8">
-            <h2 class="text-3xl font-black">Balance & Payments</h2>
-            <div class="grid grid-cols-3 gap-8">
-                <div class="col-span-1 bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 space-y-4">
-                    <h3 class="font-bold text-indigo-600 uppercase text-xs">New Entry</h3>
-                    <select id="fin-student" class="w-full p-3 bg-slate-50 rounded-xl"></select>
-                    <input type="number" id="fin-sal" placeholder="Salary Declared (₹)" class="w-full p-3 bg-slate-50 rounded-xl">
-                    <input type="number" id="fin-mat" placeholder="Material Declared (₹)" class="w-full p-3 bg-slate-50 rounded-xl">
-                    <input type="number" id="fin-paid" placeholder="Amount Paying (₹)" class="w-full p-3 bg-slate-50 rounded-xl">
-                    <select id="fin-method" class="w-full p-3 bg-slate-50 rounded-xl">
-                        <option>Cash</option>
-                        <option>GPay</option>
-                    </select>
-                    <button onclick="saveFinance()" class="w-full bg-slate-900 text-white font-bold p-4 rounded-xl">Update Record</button>
+                <div class="bg-white p-6 rounded-[2rem] shadow-sm">
+                    <canvas id="balanceChart" height="100"></canvas>
                 </div>
-                <div class="col-span-2 bg-white rounded-[2rem] shadow-sm overflow-hidden border border-slate-200">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50">
+            </section>
+
+            <section id="tab-members" class="tab-content space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-3xl font-black">Member Directory</h2>
+                    <div class="flex gap-2">
+                        <input type="text" id="m-name" placeholder="Full Name" class="w-64">
+                        <select id="m-dept">
+                            <option>AIDS</option><option>AIML</option><option>CSE</option><option>IT</option>
+                            <option>ECE</option><option>EEE</option><option>CIVIL</option><option>MECH</option>
+                        </select>
+                        <button onclick="addMember()" class="bg-indigo-600 text-white px-6 py-2 rounded-xl font-bold">+ Register</button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-[2rem] shadow overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50 border-b">
                             <tr>
-                                <th class="p-4">Name</th>
-                                <th class="p-4">Declared</th>
-                                <th class="p-4">Paid</th>
-                                <th class="p-4 text-indigo-600">Balance</th>
+                                <th class="p-5">Name (ID)</th>
+                                <th class="p-5">Dept</th>
+                                <th class="p-5">Year</th>
+                                <th class="p-5">Phone</th>
+                                <th class="p-5">Status</th>
                             </tr>
                         </thead>
-                        <tbody id="balance-table-body"></tbody>
+                        <tbody id="member-list"></tbody>
                     </table>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="attendance" class="p-10 hidden">
-             <h2 class="text-3xl font-black mb-6 text-slate-800">Meal Tracking</h2>
-             <div id="attendance-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
-        </section>
+            <section id="tab-finance" class="tab-content space-y-6">
+                <h2 class="text-3xl font-black">Finance & Spending</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-[2rem] shadow-lg border-t-4 border-indigo-500">
+                        <h3 class="font-bold text-lg mb-4">Record Payment (Student)</h3>
+                        <div class="space-y-4">
+                            <select id="f-student" class="w-full"></select>
+                            <div class="grid grid-cols-2 gap-4">
+                                <input type="number" id="f-sal" placeholder="Salary Declared">
+                                <input type="number" id="f-mat" placeholder="Material Declared">
+                            </div>
+                            <input type="number" id="f-paid" placeholder="Amount Paid Today" class="w-full">
+                            <button onclick="saveFinance()" class="w-full bg-slate-900 text-white font-bold p-4 rounded-xl">Secure Entry</button>
+                        </div>
+                    </div>
+                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm overflow-hidden">
+                        <h3 class="font-bold mb-4">Individual Balances</h3>
+                        <div id="balance-list" class="space-y-3"></div>
+                    </div>
+                </div>
+            </section>
 
-    </main>
-
-    <div id="modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center z-50">
-        <div class="bg-white p-10 rounded-[3rem] w-full max-w-md shadow-2xl">
-            <h3 class="text-2xl font-black mb-6">Register Member</h3>
-            <div class="space-y-4">
-                <input type="text" id="new-name" placeholder="Full Name (Primary ID)" class="w-full p-4 border rounded-2xl">
-                <select id="new-dept" class="w-full p-4 border rounded-2xl">
-                    <option>AIDS</option><option>AIML</option><option>CIVIL</option><option>CHEMICAL</option>
-                    <option>EEE</option><option>ECE</option><option>CSE</option><option>IT</option>
-                    <option>MECHANICAL</option><option>CCE</option><option>CSBS</option>
-                </select>
-                <input type="text" id="new-phone" placeholder="Phone Number" class="w-full p-4 border rounded-2xl">
-                <button onclick="saveNewMember()" class="w-full bg-indigo-600 text-white font-black p-5 rounded-2xl mt-4">Save Entry</button>
-                <button onclick="closeModal()" class="w-full text-slate-400 font-bold">Cancel</button>
-            </div>
-        </div>
+        </main>
     </div>
 
     <script>
-        // --- DATABASE INIT ---
         let db;
-        const request = indexedDB.open("FoodCoSystem_V3", 1);
-        request.onupgradeneeded = (e) => {
+        // OPEN DATABASE
+        const req = indexedDB.open("FoodCoFinal", 1);
+        req.onupgradeneeded = (e) => {
             db = e.target.result;
             db.createObjectStore("members", { keyPath: "name" });
-            db.createObjectStore("finance", { keyPath: "id", autoIncrement: true });
-            db.createObjectStore("attendance", { keyPath: "date" });
+            db.createObjectStore("logs", { keyPath: "id", autoIncrement: true });
         };
-        request.onsuccess = (e) => { db = e.target.result; init(); };
+        req.onsuccess = (e) => { db = e.target.result; renderAll(); };
 
-        function init() {
-            document.getElementById('date-now').innerText = new Date().toDateString();
-            const today = new Date();
-            const last = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-            document.getElementById('days-rem').innerText = last - today.getDate();
-            loadAll();
-            renderChart();
+        // TAB SWITCHER
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-nav'));
+            document.getElementById('tab-' + tabId).style.display = 'block';
+            document.getElementById('btn-' + tabId).classList.add('active-nav');
+            renderAll();
         }
 
-        // --- NAVIGATION ---
-        function nav(id) {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active-nav'));
-            document.getElementById(id).classList.remove('hidden');
-            document.getElementById('n-' + id).classList.add('active-nav');
-        }
-
-        function openModal() { document.getElementById('modal').classList.remove('hidden'); }
-        function closeModal() { document.getElementById('modal').classList.add('hidden'); }
-
-        // --- MEMBER ENGINE ---
-        function saveNewMember() {
-            const name = document.getElementById('new-name').value;
-            if(!name) return alert("Name is required!");
-            const member = {
+        // --- MEMBER LOGIC ---
+        function addMember() {
+            const name = document.getElementById('m-name').value;
+            if(!name) return alert("Enter Name");
+            const data = {
                 name: name,
-                dept: document.getElementById('new-dept').value,
-                phone: document.getElementById('new-phone').value,
+                dept: document.getElementById('m-dept').value,
                 year: "1st Year",
-                salDeclared: 0, matDeclared: 0, paid: 0
+                phone: "0000000000",
+                sal: 0, mat: 0, paid: 0
             };
             const tx = db.transaction("members", "readwrite");
-            tx.objectStore("members").add(member);
-            tx.oncomplete = () => { closeModal(); loadAll(); };
+            tx.objectStore("members").add(data);
+            tx.oncomplete = () => { document.getElementById('m-name').value = ""; renderAll(); };
         }
 
-        function updateMember(name, field, val) {
+        function updateField(name, field, val) {
             const tx = db.transaction("members", "readwrite");
             const store = tx.objectStore("members");
             store.get(name).onsuccess = (e) => {
@@ -213,99 +163,90 @@
             };
         }
 
-        // --- FINANCE ENGINE ---
+        // --- FINANCE LOGIC ---
         function saveFinance() {
-            const name = document.getElementById('fin-student').value;
-            const sal = parseFloat(document.getElementById('fin-sal').value) || 0;
-            const mat = parseFloat(document.getElementById('fin-mat').value) || 0;
-            const paid = parseFloat(document.getElementById('fin-paid').value) || 0;
+            const name = document.getElementById('f-student').value;
+            const sal = Number(document.getElementById('f-sal').value) || 0;
+            const mat = Number(document.getElementById('f-mat').value) || 0;
+            const paid = Number(document.getElementById('f-paid').value) || 0;
 
             const tx = db.transaction("members", "readwrite");
             const store = tx.objectStore("members");
             store.get(name).onsuccess = (e) => {
                 const data = e.target.result;
-                data.salDeclared += sal;
-                data.matDeclared += mat;
+                data.sal += sal;
+                data.mat += mat;
                 data.paid += paid;
                 store.put(data);
-                alert("Finance Updated!");
-                loadAll();
+                
+                // Clear inputs
+                document.getElementById('f-sal').value = "";
+                document.getElementById('f-mat').value = "";
+                document.getElementById('f-paid').value = "";
+                renderAll();
+                alert("Entry Stored Successfully!");
             };
         }
 
-        // --- DATA LOADERS ---
-        function loadAll() {
-            const memberBody = document.getElementById('member-table-body');
-            const balanceBody = document.getElementById('balance-table-body');
-            const finDrop = document.getElementById('fin-student');
+        // --- RENDER ENGINE (The Heart of the app) ---
+        function renderAll() {
+            const memberList = document.getElementById('member-list');
+            const financeSelect = document.getElementById('f-student');
+            const balanceList = document.getElementById('balance-list');
             
-            memberBody.innerHTML = "";
-            balanceBody.innerHTML = "";
-            finDrop.innerHTML = "";
+            if(!memberList) return; // Guard if not in DOM
 
-            let totalIn = 0; let totalPending = 0; let count = 0;
+            memberList.innerHTML = "";
+            financeSelect.innerHTML = "";
+            balanceList.innerHTML = "";
+
+            let totalCollection = 0;
+            let totalPending = 0;
 
             const tx = db.transaction("members", "readonly");
             tx.objectStore("members").openCursor().onsuccess = (e) => {
                 const cursor = e.target.result;
                 if(cursor) {
                     const m = cursor.value;
-                    count++;
-                    totalIn += m.paid;
-                    const balance = (m.salDeclared + m.matDeclared) - m.paid;
+                    const balance = (m.sal + m.mat) - m.paid;
+                    totalCollection += m.paid;
                     totalPending += balance;
 
-                    // Update Member Table
-                    memberBody.innerHTML += `
-                        <tr class="border-b">
-                            <td class="p-6 font-bold text-slate-400">${m.name}</td>
-                            <td class="p-6"><select onchange="updateMember('${m.name}','dept',this.value)" class="bg-slate-50 p-2 rounded">
-                                <option ${m.dept=='CSE'?'selected':''}>CSE</option><option ${m.dept=='IT'?'selected':''}>IT</option>
-                                <option ${m.dept=='AIDS'?'selected':''}>AIDS</option><option ${m.dept=='AIML'?'selected':''}>AIML</option>
-                            </select></td>
-                            <td class="p-6"><input onchange="updateMember('${m.name}','year',this.value)" class="w-20 p-2 bg-slate-50 rounded" value="${m.year}"></td>
-                            <td class="p-6"><input onchange="updateMember('${m.name}','phone',this.value)" class="p-2 bg-slate-50 rounded" value="${m.phone}"></td>
-                            <td class="p-6"><button class="text-red-400 hover:text-red-600"><i class="fas fa-trash"></i></button></td>
+                    // Table Row
+                    memberList.innerHTML += `
+                        <tr class="border-b hover:bg-slate-50 transition">
+                            <td class="p-5 font-bold text-slate-400">${m.name}</td>
+                            <td class="p-5"><input onchange="updateField('${m.name}', 'dept', this.value)" value="${m.dept}" class="p-1 w-24"></td>
+                            <td class="p-5"><input onchange="updateField('${m.name}', 'year', this.value)" value="${m.year}" class="p-1 w-24"></td>
+                            <td class="p-5"><input onchange="updateField('${m.name}', 'phone', this.value)" value="${m.phone}" class="p-1 w-32"></td>
+                            <td class="p-5"><span class="text-green-500 font-bold">● Active</span></td>
                         </tr>
                     `;
 
-                    // Update Balance Table
-                    balanceBody.innerHTML += `
-                        <tr class="border-b">
-                            <td class="p-4 font-bold">${m.name}</td>
-                            <td class="p-4">₹${m.salDeclared + m.matDeclared}</td>
-                            <td class="p-4 text-green-600 font-bold">₹${m.paid}</td>
-                            <td class="p-4 font-black text-indigo-600">₹${balance}</td>
-                        </tr>
+                    // Finance Select
+                    financeSelect.innerHTML += `<option value="${m.name}">${m.name}</option>`;
+
+                    // Balance Card
+                    balanceList.innerHTML += `
+                        <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                            <div>
+                                <p class="font-bold text-slate-800">${m.name}</p>
+                                <p class="text-[10px] text-slate-400 uppercase">Paid: ₹${m.paid}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-indigo-600 font-black">₹${balance}</p>
+                                <p class="text-[10px] text-slate-400 uppercase">Balance</p>
+                            </div>
+                        </div>
                     `;
 
-                    finDrop.innerHTML += `<option>${m.name}</option>`;
                     cursor.continue();
                 } else {
-                    document.getElementById('stat-income').innerText = "₹ " + totalIn.toLocaleString();
-                    document.getElementById('stat-pending').innerText = "₹ " + totalPending.toLocaleString();
-                    document.getElementById('stat-eaters').innerText = count;
+                    // Update Dashboard
+                    document.getElementById('h-total-in').innerText = "₹ " + totalCollection.toLocaleString();
+                    document.getElementById('h-pending').innerText = "₹ " + totalPending.toLocaleString();
                 }
             };
-        }
-
-        function renderChart() {
-            const ctx = document.getElementById('mainChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-                    datasets: [{
-                        label: 'Cash Inflow',
-                        data: [50000, 45000, 60000, 55000, 70000],
-                        borderColor: '#4f46e5',
-                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
-            });
         }
     </script>
 </body>
